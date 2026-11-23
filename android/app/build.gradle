@@ -7,8 +7,8 @@ android {
         applicationId 'fr.alcatache.gardien'
         minSdk 26
         targetSdk 34
-        versionCode (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
-        versionName "1.0." + (System.getenv('GITHUB_RUN_NUMBER') ?: '0')
+        versionCode = Integer.parseInt(System.getenv('GITHUB_RUN_NUMBER') ?: '1')
+        versionName = "1.0." + (System.getenv('GITHUB_RUN_NUMBER') ?: '0')
         buildConfigField 'String', 'APP_URL', "\"${System.getenv('ALCA_URL') ?: 'https://machacka.github.io/alcatache/'}\""
     }
     buildFeatures { buildConfig true }
