@@ -1,0 +1,61 @@
+name: Construire Alcatâche
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: alcatache
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+      - name: Compiler l'APK
+        working-directory: android
+        env:
+          ALCA_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+        run: gradle assembleRelease --no-daemon --stacktrace
+      - name: Renommer
+        run: cp android/app/build/outputs/apk/release/app-release.apk Alcatache-Gardien.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Alcatache-Gardien
+          path: Alcatache-Gardien.apk
+      - name: Publier l'APK (release "latest")
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete latest --yes --cleanup-tag || true
+          gh release create latest Alcatache-Gardien.apk --title "Alcatâche Gardien (dernière version)" --notes "APK à installer sur le téléphone Android du Gardien. Build ${{ github.run_number }}."
+
+  web:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+      - id: deploy
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Le code de la prison (10 caractères aléatoires) sert de clé d'accès.
+    // Impossible de lister les prisons : il faut connaître le code.
+    match /families/{fid} {
+      allow get: if true;
+      allow list: if false;
+      allow create: if fid.size() == 10;
+      allow update: if true;
+      allow delete: if false;
+      match /{sub=**} {
+        allow get, list, create, update: if true;
+        allow delete: if false;
+      }
+    }
+  }
+}

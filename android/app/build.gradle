@@ -1,0 +1,28 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'fr.alcatache.gardien'
+    compileSdk 34
+    defaultConfig {
+        applicationId 'fr.alcatache.gardien'
+        minSdk 26
+        targetSdk 34
+        versionCode (System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger()
+        versionName "1.0." + (System.getenv('GITHUB_RUN_NUMBER') ?: '0')
+        buildConfigField 'String', 'APP_URL', "\"${System.getenv('ALCA_URL') ?: 'https://machacka.github.io/alcatache/'}\""
+    }
+    buildFeatures { buildConfig true }
+    signingConfigs {
+        alca {
+            storeFile file('alcatache.keystore')
+            storePassword 'alcatache'
+            keyAlias 'alcatache'
+            keyPassword 'alcatache'
+        }
+    }
+    buildTypes {
+        release { minifyEnabled false; signingConfig signingConfigs.alca }
+        debug { signingConfig signingConfigs.alca }
+    }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}

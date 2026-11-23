@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Prison" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:statusBarColor">#16171A</item>
+        <item name="android:navigationBarColor">#0F1012</item>
+        <item name="android:colorAccent">#FF6A13</item>
+    </style>
+</resources>
